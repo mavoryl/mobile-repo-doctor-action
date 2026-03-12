@@ -79,6 +79,18 @@ if (quickWins && quickWins.length > 0) {
   }
 }
 
+// Upsell for free-tier users
+if (!process.env.REPO_DOCTOR_API_KEY) {
+  lines.push('');
+  lines.push('---');
+  lines.push('');
+  lines.push('### Unlock Premium Checks');
+  lines.push('');
+  lines.push('This scan used **core checks only**. Upgrade to Pro for 20+ additional checks covering APK splitting, PNG optimization, WebP conversion, and more.');
+  lines.push('');
+  lines.push('[Get Pro →](https://mobile-repo-doctor.dev/checkout.html?plan=pro) · [Compare Plans](https://mobile-repo-doctor.dev/#pricing)');
+}
+
 lines.push('');
 
 // Write Step Summary
