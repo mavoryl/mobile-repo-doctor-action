@@ -1,0 +1,109 @@
+name: 'Mobile Repo Doctor'
+description: 'Scan a mobile repository for health issues — assets, dependencies, config, structure. Get a score, findings, and actionable fixes.'
+branding:
+  icon: 'activity'
+  color: 'green'
+
+inputs:
+  api-key:
+    description: 'API key for Pro features (premium rules, advanced checks)'
+    required: false
+    default: ''
+  fail-on:
+    description: 'Failure policy: none | critical | high | score-below-N (e.g. score-below-70)'
+    required: false
+    default: 'none'
+  output:
+    description: 'Report formats (comma-separated): html, json, or html,json'
+    required: false
+    default: 'html,json'
+  scan-path:
+    description: 'Path to the mobile repository to scan'
+    required: false
+    default: '.'
+  verbose:
+    description: 'Enable verbose output'
+    required: false
+    default: 'false'
+  upload-artifacts:
+    description: 'Upload HTML/JSON reports as workflow artifacts'
+    required: false
+    default: 'true'
+  artifact-name:
+    description: 'Name for the uploaded artifact'
+    required: false
+    default: 'repo-doctor-report'
+
+outputs:
+  score:
+    description: 'Overall health score (0-100)'
+    value: ${{ steps.summary.outputs.score }}
+  grade:
+    description: 'Health grade (A-F)'
+    value: ${{ steps.summary.outputs.grade }}
+  findings-count:
+    description: 'Total number of findings'
+    value: ${{ steps.summary.outputs.findings_count }}
+  critical-count:
+    description: 'Number of critical findings'
+    value: ${{ steps.summary.outputs.critical_count }}
+  high-count:
+    description: 'Number of high findings'
+    value: ${{ steps.summary.outputs.high_count }}
+  exit-code:
+    description: 'Final exit code after policy evaluation'
+    value: ${{ steps.summary.outputs.exit_code }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Run scan
+      id: scan
+      shell: bash
+      env:
+        REPO_DOCTOR_API_KEY: ${{ inputs.api-key }}
+      run: |
+        REPORT_DIR="${RUNNER_TEMP}/repo-doctor"
+        mkdir -p "$REPORT_DIR"
+
+        ARGS="scan ${{ inputs.scan-path }}"
+        ARGS="$ARGS -f ${{ inputs.output }}"
+        ARGS="$ARGS -o $REPORT_DIR/report"
+        ARGS="$ARGS --no-telemetry"
+
+        if [ "${{ inputs.verbose }}" = "true" ]; then
+          ARGS="$ARGS --verbose"
+        fi
+        if [ -n "${{ inputs.api-key }}" ]; then
+          ARGS="$ARGS --api-key ${{ inputs.api-key }}"
+        fi
+
+        set +e
+        node "${{ github.action_path }}/dist/cli.cjs" $ARGS
+        CLI_EXIT=$?
+        set -e
+
+        echo "cli-exit=$CLI_EXIT" >> "$GITHUB_OUTPUT"
+        echo "report-dir=$REPORT_DIR" >> "$GITHUB_OUTPUT"
+
+    - name: Generate summary
+      id: summary
+      shell: bash
+      run: |
+        node "${{ github.action_path }}/dist/summary.mjs" \
+          "${{ steps.scan.outputs.report-dir }}/report.json" \
+          "${{ inputs.fail-on }}" \
+          "${{ steps.scan.outputs.cli-exit }}"
+
+    - name: Upload artifacts
+      if: inputs.upload-artifacts == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ steps.scan.outputs.report-dir }}/report.*
+        if-no-files-found: warn
