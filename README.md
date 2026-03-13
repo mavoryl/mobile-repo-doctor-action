@@ -5,7 +5,7 @@ Automated health checks for Flutter, Android, iOS, and KMP repositories. Runs in
 ## Usage
 
 ```yaml
-- uses: Autocrab/mobile-repo-doctor-action@v1
+- uses: Mavoryl/mobile-repo-doctor-action@v1
   with:
     scan-path: '.'
     fail-on: 'high'          # none | critical | high | score-below-70
@@ -15,7 +15,7 @@ Automated health checks for Flutter, Android, iOS, and KMP repositories. Runs in
 ### With Pro features
 
 ```yaml
-- uses: Autocrab/mobile-repo-doctor-action@v1
+- uses: Mavoryl/mobile-repo-doctor-action@v1
   with:
     api-key: ${{ secrets.REPO_DOCTOR_API_KEY }}
     fail-on: 'score-below-70'
@@ -56,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: Autocrab/mobile-repo-doctor-action@v1
+      - uses: Mavoryl/mobile-repo-doctor-action@v1
         id: scan
         with:
           fail-on: 'high'
