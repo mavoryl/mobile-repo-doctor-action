@@ -1,6 +1,6 @@
 # Mobile Repo Doctor — GitHub Action
 
-Automated health checks for Flutter, Android, iOS, and KMP repositories. Runs in your CI — code never leaves the runner.
+Automated health checks for Android, iOS, Flutter, and KMP repositories. Runs in your CI — code never leaves the runner.
 
 ## Usage
 
@@ -75,4 +75,8 @@ jobs:
 - **Stability** — config drift, manifest anomalies, platform hardening
 - **Hygiene** — sensitive files, generated code, project structure
 
-Supports Flutter, Android, iOS, and KMP projects.
+Supports Android, iOS, Flutter, and KMP projects.
+
+## Links
+
+- [npm package](https://www.npmjs.com/package/mobile-repo-doctor) — install locally: `npm i -g mobile-repo-doctor`
