@@ -1,32 +1,32 @@
 name: 'Mobile Repo Doctor'
-description: 'Scan a mobile repository for health issues — assets, dependencies, config, structure. Get a score, findings, and actionable fixes.'
+description: 'Scan a mobile repo for health issues — assets, dependencies, config, structure. Score, findings, and fixes.'
 branding:
   icon: 'activity'
-  color: 'green'
+  color: 'blue'
 
 inputs:
   api-key:
-    description: 'API key for Pro features (premium rules, advanced checks)'
+    description: 'API key for Pro features'
     required: false
     default: ''
   fail-on:
-    description: 'Failure policy: none | critical | high | score-below-N (e.g. score-below-70)'
+    description: 'Failure policy: none | critical | high | score-below-N'
     required: false
-    default: 'none'
+    default: 'high'
   output:
     description: 'Report formats (comma-separated): html, json, or html,json'
     required: false
     default: 'html,json'
   scan-path:
-    description: 'Path to the mobile repository to scan'
+    description: 'Path to the mobile repository'
     required: false
-    default: '.'
+    default: ${{ github.workspace }}
   verbose:
     description: 'Enable verbose output'
     required: false
     default: 'false'
   upload-artifacts:
-    description: 'Upload HTML/JSON reports as workflow artifacts'
+    description: 'Upload report artifacts'
     required: false
     default: 'true'
   artifact-name:
@@ -57,35 +57,45 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '22'
+        cache: 'pnpm'
+        cache-dependency-path: ${{ github.action_path }}/../pnpm-lock.yaml
+
+    - name: Install and build
+      shell: bash
+      working-directory: ${{ github.action_path }}/..
+      run: pnpm install --frozen-lockfile && pnpm build
 
     - name: Run scan
       id: scan
       shell: bash
+      working-directory: ${{ github.action_path }}/..
       env:
         REPO_DOCTOR_API_KEY: ${{ inputs.api-key }}
       run: |
         REPORT_DIR="${RUNNER_TEMP}/repo-doctor"
         mkdir -p "$REPORT_DIR"
-
-        ARGS="scan ${{ inputs.scan-path }}"
-        ARGS="$ARGS -f ${{ inputs.output }}"
-        ARGS="$ARGS -o $REPORT_DIR/report"
+        VERBOSE_FLAG=""
         if [ "${{ inputs.verbose }}" = "true" ]; then
-          ARGS="$ARGS --verbose"
+          VERBOSE_FLAG="--verbose"
         fi
+        API_KEY_FLAG=""
         if [ -n "${{ inputs.api-key }}" ]; then
-          ARGS="$ARGS --api-key ${{ inputs.api-key }}"
+          API_KEY_FLAG="--api-key ${{ inputs.api-key }}"
         fi
-
         set +e
-        node "${{ github.action_path }}/dist/cli.cjs" $ARGS
+        pnpm repo-doctor -- scan "${{ inputs.scan-path }}" \
+          -f "${{ inputs.output }}" \
+          -o "$REPORT_DIR/report" \
+          $VERBOSE_FLAG $API_KEY_FLAG
         CLI_EXIT=$?
         set -e
-
         echo "cli-exit=$CLI_EXIT" >> "$GITHUB_OUTPUT"
         echo "report-dir=$REPORT_DIR" >> "$GITHUB_OUTPUT"
 
@@ -93,7 +103,7 @@ runs:
       id: summary
       shell: bash
       run: |
-        node "${{ github.action_path }}/dist/summary.mjs" \
+        node "${{ github.action_path }}/summary.mjs" \
           "${{ steps.scan.outputs.report-dir }}/report.json" \
           "${{ inputs.fail-on }}" \
           "${{ steps.scan.outputs.cli-exit }}"
