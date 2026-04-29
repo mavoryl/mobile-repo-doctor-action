@@ -2,6 +2,20 @@
 
 Automated health checks for Android, iOS, Flutter, and KMP repositories. Runs in your CI — code never leaves the runner.
 
+## What you get
+
+A standalone HTML report with a health score (0–100), severity-ranked findings, and actionable fixes — generated as a workflow artifact.
+
+![Health score overview](screenshots/health-score.png)
+
+Top issues are sorted by severity with one-line summaries:
+
+![Top issues](screenshots/top-issues.png)
+
+Each finding includes why it matters, impact, evidence (file paths, sizes), and a concrete fix:
+
+![Finding detail](screenshots/finding-detail.png)
+
 ## Usage
 
 ```yaml
@@ -70,12 +84,12 @@ jobs:
 
 ## What it checks
 
-- **Size** — oversized assets, duplicates, heavy fonts & Lottie
-- **Speed** — dependency health, build config, optimization flags
-- **Stability** — config drift, manifest anomalies, platform hardening
-- **Hygiene** — sensitive files, generated code, project structure
+- **Size** — oversized assets, duplicates, heavy fonts & Lottie, WebP candidates, unoptimized PNGs
+- **Speed** — dependency health, build config, optimization flags, kapt/ksp drift
+- **Stability** — config drift, manifest anomalies, low SDK targets, platform hardening
+- **Hygiene** — sensitive files, generated code, project structure, lockfile drift
 
-Supports Android, iOS, Flutter, and KMP projects.
+71 checks total — 50 free, 21 in the Pro tier. Supports Android, iOS, Flutter, and KMP projects.
 
 ## Links
 
