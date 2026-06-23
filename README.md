@@ -81,7 +81,7 @@ jobs:
 - **Stability** — config drift, manifest anomalies, low SDK targets, platform hardening
 - **Hygiene** — sensitive files, generated code, project structure, lockfile drift
 
-80+ checks, all free. Supports Android, iOS, Flutter, and KMP projects.
+90+ checks, all free. Supports Android, iOS, Flutter, and KMP projects.
 
 ## Links
 
