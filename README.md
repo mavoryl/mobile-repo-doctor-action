@@ -26,20 +26,12 @@ Each finding includes why it matters, impact, evidence (file paths, sizes), and 
     output: 'html,json'
 ```
 
-### With Pro features
-
-```yaml
-- uses: Mavoryl/mobile-repo-doctor-action@v1
-  with:
-    api-key: ${{ secrets.REPO_DOCTOR_API_KEY }}
-    fail-on: 'score-below-70'
-```
+The scan runs entirely on the runner — no API key, no account, no network calls.
 
 ## Inputs
 
 | Input | Default | Description |
 |-------|---------|-------------|
-| `api-key` | `''` | API key for premium rules |
 | `fail-on` | `none` | Failure policy: `none`, `critical`, `high`, `score-below-N` |
 | `output` | `html,json` | Report formats |
 | `scan-path` | `.` | Path to scan |
@@ -89,7 +81,7 @@ jobs:
 - **Stability** — config drift, manifest anomalies, low SDK targets, platform hardening
 - **Hygiene** — sensitive files, generated code, project structure, lockfile drift
 
-71 checks total — 50 free, 21 in the Pro tier. Supports Android, iOS, Flutter, and KMP projects.
+80+ checks, all free. Supports Android, iOS, Flutter, and KMP projects.
 
 ## Links
 
