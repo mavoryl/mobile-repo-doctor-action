@@ -2,6 +2,8 @@
 
 Automated health checks for Android, iOS, Flutter, and KMP repositories. Runs in your CI — code never leaves the runner.
 
+📖 **Documentation & full check reference:** https://mavoryl.github.io/mobile-repo-doctor/
+
 ## What you get
 
 A standalone HTML report with a health score (0–100), severity-ranked findings, and actionable fixes — generated as a workflow artifact.
@@ -81,7 +83,7 @@ jobs:
 - **Stability** — config drift, manifest anomalies, low SDK targets, platform hardening
 - **Hygiene** — sensitive files, generated code, project structure, lockfile drift
 
-110+ checks, all free. Supports Android, iOS, Flutter, and KMP projects.
+115 checks, all free. Supports Android, iOS, Flutter, and KMP projects. Full reference: https://mavoryl.github.io/mobile-repo-doctor/checks/
 
 ## Links
 
