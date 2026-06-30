@@ -83,7 +83,7 @@ jobs:
 - **Stability** — config drift, manifest anomalies, low SDK targets, platform hardening
 - **Hygiene** — sensitive files, generated code, project structure, lockfile drift
 
-115 checks, all free. Supports Android, iOS, Flutter, and KMP projects. Full reference: https://mavoryl.github.io/mobile-repo-doctor/checks/
+118 checks, all free. Supports Android, iOS, Flutter, and KMP projects. Full reference: https://mavoryl.github.io/mobile-repo-doctor/checks/
 
 ## Links
 
