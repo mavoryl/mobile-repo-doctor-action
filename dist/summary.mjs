@@ -110,7 +110,7 @@ setOutput('critical_count', String(counts.critical));
 setOutput('high_count', String(counts.high));
 
 // Evaluate fail-on policy
-let finalExit = 0;
+let finalExit;
 
 if (failOn === 'none') {
   finalExit = 0;
